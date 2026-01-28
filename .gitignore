@@ -7,3 +7,5 @@ coverage/
 .vscode/
 .idea/
 public/css/output.css
+src/public/output.css
+package-lock.json
