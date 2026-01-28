@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Dashboard | Martín Dev</title>
+
+    <link rel="stylesheet" href="/output.css">
+    <script defer src="/js/alpine/cdn.min.js"></script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* Personalización de Scrollbar para que se vea Pro */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        /* Animación suave para el cambio de tema */
+        .theme-transition {
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
+
+        /* Glass Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .dark .glass {
+            background: rgba(30, 41, 59, 0.7);
+        }
+    </style>
+</head>
+
+<body x-data="{ 
+    sidebarOpen: true, 
+    darkMode: localStorage.getItem('darkMode') === 'true',
+    currentPage: 'dashboard',
+    currentTheme: localStorage.getItem('theme') || 'blue',
+    notifications: 5,
+    
+    themes: {
+        blue:   { primary: 'bg-blue-600',   text: 'text-blue-600',   light: 'bg-blue-50',   dark: 'dark:bg-blue-900/20',   border: 'border-blue-200' },
+        purple: { primary: 'bg-indigo-600', text: 'text-indigo-600', light: 'bg-indigo-50', dark: 'dark:bg-indigo-900/20', border: 'border-indigo-200' },
+        green:  { primary: 'bg-emerald-600',text: 'text-emerald-600',light: 'bg-emerald-50',dark: 'dark:bg-emerald-900/20',border: 'border-emerald-200' },
+        orange: { primary: 'bg-orange-500', text: 'text-orange-500', light: 'bg-orange-50', dark: 'dark:bg-orange-900/20', border: 'border-orange-200' },
+        rose:   { primary: 'bg-rose-500',   text: 'text-rose-500',   light: 'bg-rose-50',   dark: 'dark:bg-rose-900/20',   border: 'border-rose-200' }
+    },
+
+    toggleDarkMode() {
+        this.darkMode = !this.darkMode;
+        localStorage.setItem('darkMode', this.darkMode);
+    },
+    setTheme(theme) {
+        this.currentTheme = theme;
+        localStorage.setItem('theme', theme);
+    }
+}" :class="darkMode ? 'dark' : ''" class="antialiased theme-transition font-sans" x-cloak>
+
+    <div class="flex h-screen overflow-hidden bg-[#f8fafc] dark:bg-[#0f172a] transition-colors duration-500">
+
+        <aside :class="sidebarOpen ? 'w-72' : 'w-24'"
+            class="relative h-screen transition-all duration-300 ease-in-out flex-shrink-0 z-30">
+            <div
+                class="flex flex-col h-full m-4 rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden">
+
+                <div class="flex items-center justify-between p-6">
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <div :class="themes[currentTheme].primary"
+                            class="p-2 rounded-xl shadow-lg shadow-indigo-500/20 flex-shrink-0">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <span x-show="sidebarOpen" x-transition:enter.duration.400ms
+                            class="text-xl font-black tracking-tight dark:text-white uppercase italic">Nexus<span
+                                :class="themes[currentTheme].text">.</span></span>
+                    </div>
+                </div>
+
+                <nav class="flex-1 px-4 space-y-2 mt-4">
+                    <template x-for="item in [
+                        { id: 'dashboard', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+                        { id: 'users', label: 'Clientes', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
+                        { id: 'analytics', label: 'Reportes', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+                        { id: 'settings', label: 'Ajustes', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' }
+                    ]">
+                        <!--button @click="currentPage = item.id"
+                            :class="currentPage === item.id ? themes[currentTheme].primary + ' text-white shadow-lg shadow-indigo-500/20' : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-600 dark:hover:text-slate-200'"
+                            class="w-full flex items-center p-3.5 rounded-2xl transition-all duration-300 group">
+                            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-width="2" :d="item.icon" />
+                            </svg>
+                            <span x-show="sidebarOpen" class="ml-4 font-semibold text-sm tracking-wide"
+                                x-text="item.label"></span>
+                        </button-->
+                        <button @click="currentPage = item.id" :class="[
+        currentPage === item.id 
+            ? themes[currentTheme].primary + ' text-white shadow-lg shadow-indigo-500/20' 
+            : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-600 dark:hover:text-slate-200',
+        sidebarOpen ? 'px-4 justify-start' : 'px-0 justify-center'
+    ]" class="w-full flex items-center h-12 rounded-2xl transition-all duration-300 group">
+                            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-width="2" :d="item.icon" />
+                            </svg>
+                            <span x-show="sidebarOpen" class="ml-4 font-semibold text-sm tracking-wide"
+                                x-text="item.label"></span>
+                        </button>
+                    </template>
+                </nav>
+
+                <div class="p-4 mt-auto">
+                    <div x-show="sidebarOpen" class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 transition-all">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Plan Actual</p>
+                        <p class="text-xs font-bold dark:text-white">Responsable Inscripto</p>
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full mt-3 overflow-hidden">
+                            <div :class="themes[currentTheme].primary" class="h-full w-2/3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col min-w-0">
+
+            <header
+                class="h-20 flex items-center justify-between px-8 glass border-b border-slate-200 dark:border-slate-800 sticky top-0 z-20">
+                <div class="flex items-center space-x-4">
+                    <button @click="sidebarOpen = !sidebarOpen"
+                        class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+                        </svg>
+                    </button>
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-white capitalize" x-text="currentPage"></h2>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open"
+                            class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-width="2"
+                                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.outside="open = false"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-4"
+                            class="absolute right-0 mt-3 w-44 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-3 z-50">
+                            <div class="grid grid-cols-4 gap-2">
+                                <template x-for="(color, name) in themes">
+                                    <button @click="setTheme(name)" :class="color.primary"
+                                        class="w-8 h-8 rounded-lg transform hover:scale-110 transition shadow-inner"></button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button @click="toggleDarkMode()"
+                        class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
+                        <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                        <svg x-show="darkMode" class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </button>
+
+                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open"
+                            class="flex items-center group p-1 pr-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-indigo-500/20">
+                                MD
+                            </div>
+                            <div class="ml-3 text-left hidden sm:block">
+                                <p class="text-xs font-black text-slate-800 dark:text-white leading-none">Martín Dev</p>
+                                <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase">Admin</p>
+                            </div>
+                        </button>
+                        <div x-show="open" @click.outside="open = false" x-transition=""
+                            class="absolute right-0 mt-3 w-56 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 p-2 z-50">
+                            <a href="#"
+                                class="flex items-center px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-2xl transition">
+                                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                Mi Perfil
+                            </a>
+                            <a href="#"
+                                class="flex items-center px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-2xl transition">
+                                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04">
+                                    </path>
+                                </svg>
+                                Facturación
+                            </a>
+                            <hr class="my-2 border-slate-50 dark:border-slate-700/50">
+                            <a href="#"
+                                class="flex items-center px-4 py-3 text-sm font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-2xl transition">
+                                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                    </path>
+                                </svg>
+                                Cerrar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-8 space-y-8">
+
+                <div x-show="currentPage === 'dashboard'" x-transition:enter.duration.500ms>
+                    <div class="mb-10">
+                        <h1 class="text-3xl font-black text-slate-800 dark:text-white">Bienvenido de nuevo, Martín 👋
+                        </h1>
+                        <p class="text-slate-500 mt-1 font-medium">Esto es lo que está pasando en tu sistema hoy.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <template x-for="stat in [
+                            { label: 'Usuarios Totales', val: '12,345', inc: '+12%', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
+                            { label: 'Ingresos Mensuales', val: '$45,678', inc: '+8.4%', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+                            { label: 'Tasa de Conversión', val: '3.2%', inc: '-1.2%', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+                            { label: 'Tiempo Activo', val: '99.9%', inc: 'estable', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04M12 2.944a11.955 11.955 0 01-8.618 3.04m12.728 0c-.306 0-.613-.012-.917-.038a11.956 11.956 0 01-4.148-1.503 11.956 11.956 0 01-4.148 1.503c-.304.026-.611.038-.917.038m10.142 0A11.954 11.954 0 0112 21.48a11.954 11.954 0 01-8.142-18.436' }
+                        ]">
+                            <div
+                                class="bg-white dark:bg-slate-800 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                                <div class="flex justify-between items-start">
+                                    <div :class="themes[currentTheme].light + ' ' + themes[currentTheme].dark + ' ' + themes[currentTheme].text"
+                                        class="p-4 rounded-2xl transition-colors duration-500">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-width="2.5" :d="stat.icon" />
+                                        </svg>
+                                    </div>
+                                    <span
+                                        :class="stat.inc.includes('+') ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10' : 'text-rose-500 bg-rose-50 dark:bg-rose-500/10'"
+                                        class="text-[10px] font-black px-2 py-1 rounded-lg" x-text="stat.inc"></span>
+                                </div>
+                                <div class="mt-6">
+                                    <p class="text-sm font-bold text-slate-400 uppercase tracking-widest"
+                                        x-text="stat.label"></p>
+                                    <h3 class="text-3xl font-black text-slate-800 dark:text-white mt-1 tracking-tight"
+                                        x-text="stat.val"></h3>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div
+                        class="mt-10 bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div
+                            class="p-8 border-b border-slate-50 dark:border-slate-700/50 flex justify-between items-center">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Últimas Operaciones</h3>
+                                <p class="text-sm text-slate-400 font-medium">Monitoreo en tiempo real de Redis</p>
+                            </div>
+                            <button :class="themes[currentTheme].primary"
+                                class="px-6 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg shadow-indigo-500/20 hover:scale-105 transition">Descargar
+                                CSV</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr
+                                        class="text-left text-slate-400 text-[11px] font-black uppercase tracking-[0.2em] border-b border-slate-50 dark:border-slate-700/50">
+                                        <th class="px-8 py-6">Cliente</th>
+                                        <th class="px-8 py-6">Estado</th>
+                                        <th class="px-8 py-6">Monto</th>
+                                        <th class="px-8 py-6 text-right">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-50 dark:divide-slate-700/50">
+                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group">
+                                        <td class="px-8 py-6">
+                                            <div class="flex items-center">
+                                                <div
+                                                    class="w-10 h-10 rounded-full bg-gradient-to-tr from-slate-200 to-slate-100 dark:from-slate-700 dark:to-slate-600 mr-4">
+                                                </div>
+                                                <span class="font-bold text-slate-700 dark:text-slate-200">Distribuidora
+                                                    Alvear</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-8 py-6">
+                                            <span
+                                                class="px-4 py-1.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 uppercase tracking-widest">Aprobado</span>
+                                        </td>
+                                        <td class="px-8 py-6 font-black text-slate-800 dark:text-white">$120,450.00</td>
+                                        <td class="px-8 py-6 text-right">
+                                            <button
+                                                class="p-2 hover:bg-white dark:hover:bg-slate-600 rounded-lg shadow-sm transition border border-transparent hover:border-slate-200">
+                                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-width="2"
+                                                        d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="currentPage !== 'dashboard'"
+                    class="flex flex-col items-center justify-center h-full py-20 text-center">
+                    <div class="w-24 h-24 mb-6 opacity-20" :class="themes[currentTheme].text">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-width="1"
+                                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.675.282a4 4 0 01-1.815.343l-1.464-.146a2 2 0 01-1.646-1.11L4.5 9.5m10 1l-5 5m5-5v-5m0 5h5" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">Módulo en
+                        Construcción</h2>
+                    <p class="text-slate-400 max-w-xs mt-2">Estamos integrando los servicios de Node.js y Redis para
+                        esta sección.</p>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

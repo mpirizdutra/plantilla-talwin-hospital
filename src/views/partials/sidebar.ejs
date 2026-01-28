@@ -1,0 +1,63 @@
+<aside :class="{
+        'translate-x-0 w-72': sidebarOpen,
+        '-translate-x-full w-0 md:w-24 md:translate-x-0': !sidebarOpen
+    }" class="fixed md:relative h-screen transition-all duration-300 ease-in-out flex-shrink-0 z-50">
+
+    <div x-show="sidebarOpen" x-transition:enter="transition opacity-ease-out duration-300"
+        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+        x-transition:leave="transition opacity-ease-in duration-200" x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0" @click="sidebarOpen = false"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm md:hidden">
+    </div>
+
+    <div
+        class="flex flex-col h-full m-4 rounded-3xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden relative">
+        <div class="flex items-center justify-between p-6">
+            <div class="flex items-center space-x-3 overflow-hidden">
+                <div :class="themes[currentTheme].primary"
+                    class="p-2 rounded-xl shadow-lg shadow-indigo-500/20 flex-shrink-0">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <span x-show="sidebarOpen" x-transition:enter.duration.400ms
+                    class="text-xl font-black tracking-tight dark:text-white uppercase italic">Nexus<span
+                        :class="themes[currentTheme].text">.</span></span>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <template x-for="item in [
+        { id: 'dashboard', label: 'Dashboard', url: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+        { id: 'users', label: 'Clientes', url: '/clientes', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
+        { id: 'analytics', label: 'Reportes', url: '/reportes', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+        { id: 'settings', label: 'Ajustes', url: '/configuracion', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' }
+    ]">
+                <a :href="item.url" :class="[
+                currentPage === item.id 
+                    ? themes[currentTheme].primary + ' text-white shadow-lg shadow-indigo-500/20' 
+                    : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-600 dark:hover:text-slate-200',
+                sidebarOpen ? 'px-4 justify-start' : 'px-0 justify-center'
+           ]" class="w-full flex items-center h-12 rounded-2xl transition-all duration-300 group no-underline">
+
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-width="2" :d="item.icon" />
+                    </svg>
+
+                    <span x-show="sidebarOpen" class="ml-4 font-semibold text-sm tracking-wide"
+                        x-text="item.label"></span>
+                </a>
+            </template>
+        </nav>
+
+        <div class="p-4 mt-auto">
+            <div x-show="sidebarOpen" class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 transition-all">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Plan Actual</p>
+                <p class="text-xs font-bold dark:text-white">Responsable Inscripto</p>
+                <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full mt-3 overflow-hidden">
+                    <div :class="themes[currentTheme].primary" class="h-full w-2/3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
